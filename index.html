@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنصة التعليمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        primaryHover: 'var(--color-primary-hover)',
+                        bgDark: 'var(--color-bg-dark)',
+                        cardDark: 'var(--color-card-dark)',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+    <style>
+        :root {
+            --color-primary: #0ea5e9; 
+            --color-primary-hover: #0284c7; 
+            --color-bg-dark: #0b1120;
+            --color-card-dark: #111827;
+        }
+        body { font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.5s, color 0.5s; }
+        .theme-bg { background-color: var(--color-primary); }
+        .theme-bg-hover:hover { background-color: var(--color-primary-hover); }
+        .theme-text { color: var(--color-primary); }
+        .theme-text-hover:hover { color: var(--color-primary-hover); }
+        .theme-border { border-color: var(--color-primary); }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: var(--opacity, 0.4); }
+            90% { opacity: var(--opacity, 0.4); }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+        @keyframes spinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes spinForward { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes ringPing { 75%, 100% { transform: scale(1.5); opacity: 0; } }
+        .anim-spin-reverse { animation: spinReverse 15s linear infinite; }
+        .anim-spin-forward { animation: spinForward 20s linear infinite; }
+        .anim-ping-slow { animation: ringPing 5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        .slider-track { display: flex; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; }
+    </style>
+    <script src="js/config.js"></script>
+</head>
+<body id="app-body" class="bg-bgDark text-white min-h-screen relative overflow-x-hidden transition-colors duration-500 font-sans">
+    <div id="particles-container" class="absolute inset-0 pointer-events-none z-0 overflow-hidden"></div>
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] theme-bg animate-pulse"></div>
+        <div class="absolute top-[40%] -left-[10%] w-[40%] h-[40%] rounded-full opacity-10 blur-[100px] theme-bg animate-pulse" style="animation-delay: 2s"></div>
+        <div class="absolute -bottom-[10%] left-[20%] w-[60%] h-[60%] rounded-full opacity-10 blur-[100px] theme-bg animate-pulse" style="animation-delay: 4s"></div>
+    </div>
+
+    <div class="relative z-10">
+        <nav id="navbar" class="relative mt-4 sm:mt-6 mx-4 sm:mx-6 lg:mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center bg-cardDark/80 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-sm z-50 transition-colors">
+            <div class="flex items-center gap-3 cursor-pointer" id="nav-logo-area">
+                <div id="nav-logo-img-container" class="hidden">
+                    <img id="nav-logo-img" src="" alt="Logo" class="w-12 h-12 rounded-full object-cover border-2 theme-border" />
+                </div>
+                <div id="nav-logo-fallback" class="w-12 h-12 rounded-full theme-bg bg-opacity-10 flex items-center justify-center border-2 theme-border theme-text">
+                    <span class="font-black text-xl">V</span>
+                </div>
+                <div class="text-right hidden sm:block">
+                    <div id="nav-title" class="font-bold text-lg sm:text-xl"></div>
+                    <div id="nav-subtitle" class="text-xs sm:text-sm theme-text font-medium"></div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="theme-toggle-btn" type="button" class="flex items-center gap-2 bg-[#1e293b] rounded-full p-1 cursor-pointer transition-colors border-none outline-none">
+                    <div id="sun-icon-container" class="bg-transparent p-1.5 rounded-full transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </div>
+                    <div id="moon-icon-container" class="theme-bg p-1.5 rounded-full transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </div>
+                </button>
+                <button onclick="document.getElementById('download-section')?.scrollIntoView({ behavior: 'smooth' })" id="nav-join-btn" class="theme-bg theme-bg-hover text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span id="nav-join-text">انضم الآن !</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-10 sm:pt-16 lg:pt-24 pb-16 sm:pb-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative">
+            <div class="space-y-6 sm:space-y-8 order-2 lg:order-1 text-center lg:text-right">
+                <div id="hero-badge-container" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1e293b] border border-slate-800 theme-text font-medium text-sm transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                    <span id="hero-badge"></span>
+                </div>
+                
+                <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight"></h1>
+                <h2 id="hero-subtitle" class="text-xl sm:text-2xl md:text-3xl font-bold theme-text"></h2>
+                
+                <p id="hero-desc" class="text-base sm:text-lg lg:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto lg:mx-0 transition-colors"></p>
+                
+                <div class="pt-4 flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start">
+                    <button onclick="document.getElementById('download-section')?.scrollIntoView({ behavior: 'smooth' })" class="flex items-center justify-center gap-2 theme-bg theme-bg-hover text-white shadow-xl px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all w-full sm:w-auto transform hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        <span id="hero-start-btn"></span>
+                    </button>
+                    <button onclick="document.getElementById('footer-social')?.scrollIntoView({ behavior: 'smooth' })" id="hero-contact-container" class="flex items-center justify-center gap-2 bg-transparent hover:bg-[#1e293b] border border-slate-800 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                        <span id="hero-contact-btn"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative order-1 lg:order-2 flex justify-center items-center h-[300px] sm:h-[400px] md:h-[500px]">
+                <div class="absolute w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] theme-text">
+                    <div class="absolute inset-[-10%] rounded-full border border-current opacity-20 anim-spin-reverse border-dashed"></div>
+                    <div class="absolute inset-[-5%] rounded-full border-2 border-current opacity-30 shadow-[0_0_30px_currentColor] anim-spin-forward"></div>
+                    <div class="absolute inset-[-15%] rounded-full border border-current opacity-10 anim-ping-slow"></div>
+                    <div class="absolute inset-[0%] rounded-full border-4 border-current opacity-40"></div>
+                </div>
+                <div id="hero-image-container" class="relative z-10 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden border-[6px] border-[#0b1120] shadow-2xl hover:scale-105 transition-transform duration-700">
+                    <img id="hero-image" src="" alt="Instructor" class="w-full h-full object-cover" />
+                </div>
+            </div>
+        </main>
+        
+        <section id="download-section" class="py-20 sm:py-28 relative">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+            <div class="max-w-2xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-16">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold inline-block relative">
+                        <span class="theme-text">تحميل</span> <span id="download-title-rest">التطبيق</span>
+                        <div class="absolute -bottom-4 sm:-bottom-5 left-1/2 -translate-x-1/2 w-16 h-1.5 theme-bg rounded-full"></div>
+                    </h2>
+                </div>
+                
+                <div id="download-card" class="bg-cardDark/80 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 sm:p-14 flex flex-col items-center text-center shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(34,197,94,0.4)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <h3 id="download-android-title" class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"></h3>
+                    <p id="download-android-sub" class="text-slate-400 mb-8 sm:mb-10 text-base sm:text-lg"></p>
+                    <a id="download-apk-btn" href="#" download class="theme-bg theme-bg-hover shadow-xl text-white px-8 py-4 sm:px-12 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl transition-all flex items-center gap-3 cursor-pointer w-full sm:w-auto justify-center group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-y-1 transition-transform"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span id="download-btn-text"></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 sm:py-28 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-16">
+                    <h2 id="app-preview-title" class="text-3xl sm:text-4xl md:text-5xl font-bold"></h2>
+                </div>
+                <div id="app-preview-card" class="rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border-[8px] sm:border-[12px] border-cardDark aspect-[4/3] sm:aspect-video relative bg-cardDark">
+                    <img id="app-preview-image" src="" alt="App Preview" class="w-full h-full object-cover" />
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 sm:py-28 relative">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-16">
+                    <div id="video-badge-container" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#1e293b] border border-slate-800 theme-text font-bold text-sm mb-6 sm:mb-8 transition-colors shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/></svg>
+                        <span id="video-badge"></span>
+                    </div>
+                    <h2 id="video-title" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6"></h2>
+                    <p id="video-subtitle" class="text-base sm:text-lg text-slate-400 leading-relaxed max-w-3xl mx-auto"></p>
+                </div>
+                
+                <div id="slider-container" class="relative rounded-3xl sm:rounded-[2.5rem] overflow-hidden aspect-[4/3] sm:aspect-video shadow-2xl border border-slate-800 group bg-cardDark">
+                    <div id="slider-track" class="slider-track"></div>
+                    <div id="slider-dots" class="absolute bottom-6 sm:bottom-8 left-0 right-0 flex justify-center gap-3 z-20" dir="ltr"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 sm:py-28 relative">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-16 sm:mb-20">
+                    <div id="features-badge-container" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#1e293b] border border-slate-800 theme-text font-bold text-sm mb-6 sm:mb-8 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span id="features-badge"></span>
+                    </div>
+                    <p id="features-desc" class="text-base sm:text-lg text-slate-400 leading-relaxed max-w-3xl mx-auto"></p>
+                </div>
+                <div id="features-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"></div>
+            </div>
+        </section>
+
+        <footer id="footer-social" class="border-t border-slate-800 bg-cardDark py-16 sm:py-20">
+            <div class="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-10">
+                <div class="flex gap-6">
+                    <a id="social-fb" href="#" target="_blank" rel="noopener noreferrer" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full theme-bg theme-bg-hover flex items-center justify-center text-white transition-all transform hover:scale-110 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a id="social-wa" href="#" target="_blank" rel="noopener noreferrer" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#22c55e] hover:bg-[#16a34a] flex items-center justify-center text-white transition-all transform hover:scale-110 shadow-lg shadow-green-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </a>
+                    <a id="social-ig" href="#" target="_blank" rel="noopener noreferrer" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-[#fd5949] to-[#d6249f] hover:opacity-90 flex items-center justify-center text-white transition-all transform hover:scale-110 shadow-lg shadow-pink-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                </div>
+                
+                <p id="footer-quote" class="text-lg sm:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl"></p>
+                <div id="footer-divider" class="w-full h-px bg-slate-800 my-2"></div>
+                <div class="text-sm sm:text-base text-slate-500 space-y-3">
+                    <p><a id="footer-developer" href="https://www.facebook.com/yossef.al.sharqawy/" target="_blank" rel="noopener noreferrer" class="theme-text-hover transition-colors"></a></p>
+                    <p id="footer-copyright" class="theme-text font-medium"></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
