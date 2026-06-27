@@ -270,16 +270,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const apkBtn = document.getElementById('download-apk-btn');
-    if(apkBtn && typeof localforage !== 'undefined') {
-        apkBtn.href = config.download.apkFileName || 'app.apk';
-        apkBtn.download = config.download.apkFileName || 'app.apk';
-
-        localforage.getItem('apk_file').then(file => {
-            if(file) {
-                const url = URL.createObjectURL(file);
-                apkBtn.href = url;
+    if(apkBtn) {
+        if(config.download.apkUrl && config.download.apkUrl.trim() !== "") {
+            apkBtn.href = config.download.apkUrl;
+            
+            // إضافة خاصية download إذا كان الرابط محلي أو مباشر ولا يبدأ ب http 
+            // لضمان التحميل بدلاً من فتح الرابط
+            if (!config.download.apkUrl.startsWith('http')) {
+                apkBtn.download = config.download.apkUrl.split('/').pop() || 'app.apk';
+            } else {
+                apkBtn.removeAttribute('download');
             }
-        }).catch(err => console.log('No local APK found:', err));
+        } else {
+            apkBtn.href = "#";
+            apkBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('عفواً، رابط التحميل غير متوفر حالياً.');
+            });
+        }
     }
 
     let clicks = 0;

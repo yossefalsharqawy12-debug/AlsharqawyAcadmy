@@ -50,12 +50,14 @@
 
             <!-- APK Upload -->
             <section class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 border-t-4 border-t-green-500">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">حقن تطبيق الأندرويد (APK) للمعاينة</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">رابط تحميل تطبيق الأندرويد المباشر (APK)</h3>
                 <div class="space-y-4">
-                    <p class="text-sm text-slate-600">اختر ملف التطبيق الخاص بك لتخزينه محلياً (IndexedDB) وربطه بزر التحميل فوراً للمعاينة في هذا المتصفح.</p>
-                    <input type="file" id="input-apk-file" accept=".apk" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer">
-                    <button id="upload-apk-btn" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold transition-colors shadow-lg">حقن وحفظ الـ APK محلياً</button>
-                    <div id="apk-status" class="text-sm font-bold mt-2 text-green-600 hidden">تم حقن التطبيق بنجاح!</div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        لجعل التحميل <strong>مباشراً</strong> وبدون مواقع خارجية:
+                        <br>1- إذا كان تطبيقك صغيراً، فقط اكتب <code>app.apk</code> وارفع الملف بجوار ملفات الموقع.
+                        <br>2- بما أن تطبيقك بحجم 100 ميجا، فإننا ننصح جداً برفعه في قسم <strong>Releases</strong> بمستودع GitHub الخاص بك (والذي يسمح حتى 2 جيجا للملف!) ثم قم بنسخ الرابط المباشر للملف وضعه هنا. سيتم التحميل مباشرة!
+                    </p>
+                    <input type="text" id="input-apk-url" placeholder="مثال: app.apk أو https://github.com/.../app.apk" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-left" dir="ltr">
                 </div>
             </section>
 

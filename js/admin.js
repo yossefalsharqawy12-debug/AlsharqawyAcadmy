@@ -85,6 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('input-theme').value = siteConfig.settings.theme;
         document.getElementById('input-dark-mode').checked = siteConfig.settings.isDarkMode !== false;
         
+        // APK URL
+        document.getElementById('input-apk-url').value = siteConfig.download.apkUrl || '';
+        
         // Nav
         document.getElementById('input-nav-title').value = siteConfig.nav.title;
         document.getElementById('input-nav-sub').value = siteConfig.nav.subtitle;
@@ -104,32 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupLocalImageUpload('input-hero-img-file', 'heroImg', 'preview-hero-img-container', 'preview-hero-img');
         setupLocalImageUpload('input-app-preview-file', 'appPreviewImg', 'preview-app-container', 'preview-app-img');
         setupSliderUpload();
-    }
-
-    // APK Upload Logic
-    const uploadApkBtn = document.getElementById('upload-apk-btn');
-    const apkInput = document.getElementById('input-apk-file');
-    const apkStatus = document.getElementById('apk-status');
-
-    if (uploadApkBtn) {
-        uploadApkBtn.addEventListener('click', async () => {
-            if (!apkInput.files || apkInput.files.length === 0) {
-                alert('يرجى اختيار ملف APK أولاً');
-                return;
-            }
-            const file = apkInput.files[0];
-            try {
-                uploadApkBtn.textContent = 'جاري الحقن...';
-                await localforage.setItem('apk_file', file);
-                uploadApkBtn.textContent = 'حقن وحفظ الـ APK محلياً';
-                apkStatus.classList.remove('hidden');
-                setTimeout(() => apkStatus.classList.add('hidden'), 3000);
-            } catch (error) {
-                console.error('Error saving APK:', error);
-                alert('حدث خطأ أثناء حفظ الملف.');
-                uploadApkBtn.textContent = 'حقن وحفظ الـ APK محلياً';
-            }
-        });
     }
 
     const saveBtn = document.getElementById('save-btn');
@@ -161,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 download: {
                     ...siteConfig.download,
-                    apkFileName: 'app.apk' // Always fixed for GitHub pages approach
+                    apkUrl: document.getElementById('input-apk-url').value
                 },
                 social: {
                     ...siteConfig.social,

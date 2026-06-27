@@ -19,7 +19,8 @@ const siteConfig = {
         "androidTitle": "تطبيق الأندرويد",
         "androidSub": "النسخة الرسمية (APK)",
         "downloadBtn": "تحميل الآن",
-        "apkFileName": "app.apk"
+        "apkFileName": "app.apk",
+        "apkUrl": "https://github.com/yossefalsharqawy12-debug/AlsharqawyAcadmy/releases/download/v1.0.0/app.apk"
     },
     "appPreview": {
         "title": "نظرة على التطبيق",
@@ -30,6 +31,10 @@ const siteConfig = {
         "title": "المحاضرات المُقترحة",
         "subtitle": "استعد للتفوق مع أفضل المحاضرات على المنصة! المحاضرات دي مش بس هتسهل عليك الطريق، لكنها كمان هتخليك متميز جداً",
         "sliderImages": [
+            "images/تصميم بدون عنوان (8).png",
+            "images/تصميم بدون عنوان (7).png",
+            "images/تصميم بدون عنوان (6).png",
+            "images/تصميم بدون عنوان (5).png",
             "images/تصميم بدون عنوان (8).png",
             "images/تصميم بدون عنوان (7).png",
             "images/تصميم بدون عنوان (6).png",
